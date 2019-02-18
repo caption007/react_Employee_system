@@ -4,87 +4,96 @@ class EmployeeAdd  extends React.Component{
     constructor(props){
         super(props);
         this.state={
-            Employee:[{
-            }],
-            id:0
-        };
+            Employee:  props.editFlag ? props.editData : {
+                    IdIsNext:props.IdIsNext,
+                    First_Name:"",
+                    Last_Name:"",
+                    Sex:"",
+                    Birthday:"",
+                    Phone_Number:null,
+                    Address:"",
+                    Email:"",
+                    Develpment:""
+                }
+            };
     }
+        changeEmployee(){
+            if(this.state.Employee.First_Name!==""){
+                this.props.editFlag? this.props.editEmployee(this.state.Employee) : this.props.addEmployee(this.state.Employee);
+                this.props.close();
+            }
+            else{
+                alert("you should complete the form!")
+            }
+        }
 
-    EmployeeAdd(Id){
-        const Employee=this.state.Employee;
-        if(Id===null){
-            const First_Name=document.getElementById('first_name').value;
-            const Last_Name=document.getElementById('last_name').value;
-            const Sex=document.getElementById('add-gender').value;
-            const Birthday=document.getElementById('add-birthday').value;
-            const Phone_Number=document.getElementById('add-phonenumber').value;
-            const Address=document.getElementById('add-address').value;
-            const Email=document.getElementById('add-email').value;
-            const Develpment=document.getElementById('add-department').value;
-            const employees={IdIsNext: this.state.id ,First_Name:First_Name,Last_Name:Last_Name,Sex:Sex,Birthday:Birthday,Phone_Number:Phone_Number,Address:Address,Email:Email,Develpment:Develpment};
-            this.setState({
-                Employee:Employee.concat([               
-                    employees,
-                    ]),
-                    id:this.state.id+1
-            });
+        onChangeValue(key,reg,span,e){
+            if(reg){
+                if(!reg.test(e.target.value)&&e.target.value!==""){
+                    this.refs[span].style.display="block";
+                    this.refs.saveButton.disabled="disabled";
+                }
+                else{
+                    this.refs[span].style.display="none";
+                    this.refs.saveButton.disabled=null;
+                }
+            }
+            let Employee=this.state.Employee;
+            Employee[key]=e.target.value;
+            this.setState({Employee:Employee});
         }
-        else{
-            document.getElementById('first_name').value=Id.First_Name;
-            document.getElementById('last_name').value=Id.Last_Name;
-            document.getElementById('add-gender').value=Id.Sex;
-            document.getElementById('add-birthday').value=Id.Birthday;
-            document.getElementById('add-phonenumber').value=Id.Phone_Number;
-            document.getElementById('add-address').value=Id.Address;
-            document.getElementById('add-email').value=Id.Email;
-            document.getElementById('add-department').value=Id.Develpment;
-        }
-        }
+
         render(){
             return(
                 <div>
                     <from>
                         <p>
                             <label>Firstname:</label>
-                            <input placeholder="firstname" id='first_name'></input>
+                            <input placeholder="firstname"  value={this.state.Employee.First_Name} onChange={(e)=>this.onChangeValue("First_Name",/^[a-zA-Z]+$/,"First_NameValidation",e)}></input>
+                            <span ref="First_NameValidation" className="validationSpan" >validation only input character</span><br/>
                         </p>
                         <p>
                             <label>lastname:</label>
-                            <input placeholder="lastname" id='last_name'></input>
+                            <input placeholder="lastname" value={this.state.Employee.Last_Name} onChange={(e)=>this.onChangeValue("Last_Name",/^[a-zA-Z]+$/,"Last_NameValidation",e)}></input>
+                            <span ref="Last_NameValidation" className="validationSpan" >validation only input character</span><br/>
                         </p>
                         <p>
                             <label>gender</label>
-                                <select id='add-gender' name="gender">
+                                <select value={this.state.Employee.Sex} onChange={(e)=>this.onChangeValue("Sex",null,null,e)}>
+                                    <option></option>
                                     <option>M</option>
                                     <option>F</option>
                             </select>
                         </p>
                         <p>
                             <label>birthday</label>
-                            <input type="date" id='add-birthday' placeholder="New birthday" name="birthday"></input>
+                            <input type="date"  placeholder="New birthday" value={this.state.Employee.Birthday} onChange={(e)=>this.onChangeValue("Birthday",null,null,e)}></input>
                         </p>
                         <p>
                             <label>phonenumber</label>
-                            <input type="number" id='add-phonenumber' placeholder="New phonenumber" name="phonenumber"></input>
+                            <input type="number"  placeholder="New phonenumber"value={this.state.Employee.Phone_Number} onChange={(e)=>this.onChangeValue("Phone_Number",/^.{11,11}$/,"Phone_NumberValidation",e)}></input>
+                            <span ref="Phone_NumberValidation" className="validationSpan" >validation need input 11 digits</span><br/>
                         </p>
                         <p>
                             <label>address</label>
-                            <input type="text" id='add-address' placeholder="New address" name="address"></input>
+                            <input required type="text"  placeholder="New address" value={this.state.Employee.Address}onChange={(e)=>this.onChangeValue("Address",null,null,e)}></input>
                          </p>
                          <p>
                              <label>email</label>
-                            <input type="email" id='add-email' placeholder="New email" name="email"></input>
+                            <input type="email"  placeholder="New email"value={this.state.Employee.Email}onChange={(e)=>this.onChangeValue("Email",null,null,e)}></input>
                         </p>
                         <p>
                              <label>department</label>
-                                <select id='add-department' name="department">
+                                <select  name="department" value={this.state.Employee.Develpment}onChange={(e)=>this.onChangeValue("Develpment",null,null,e)}>
+                                    <option></option>
                                     <option>develop</option>
                                     <option>text</option>
                                     <option>manager</option>
                                  </select>
                         
                         </p>
-                        <button onClick={()=>this.props.onClick()}>add New Employee</button>
+                        <input type="button" ref="saveButton" value="save" onClick={()=>this.changeEmployee()}></input>
+                        <input type="button" value="close" onClick={()=>this.props.close()}></input>
                     </from>
             </div>
             )

@@ -1,0 +1,12 @@
+table{
+    width:100%;
+}
+
+tr{
+    width: 200px;
+}
+
+.validationSpan{
+    display: none;
+    color: red;
+}
